@@ -1,0 +1,8 @@
+python
+fastapi
+uvicorn
+Flask
+Jinja2
+Werkzeug
+pymongo
+passlib[bcrypt]
