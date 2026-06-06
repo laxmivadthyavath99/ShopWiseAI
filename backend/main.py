@@ -1,7 +1,7 @@
 from scraper import search_flipkart
 from myntra_scraper import search_myntra
 from nykaa_scraper import scrape_nykaa
-
+from amazon_scraper import search_amazon
 
 from fastapi import FastAPI
 from auth import create_user, login_user
@@ -108,6 +108,9 @@ def search(keyword: str):
     products.extend(
         search_myntra(keyword)
     )
+    products.extend(
+    search_amazon(keyword)
+)
 
     return {
         "products": products
