@@ -35,9 +35,10 @@ function App() {
   const getCheapestProduct = () => {
     if (products.length === 0) return null
     return products.reduce((min, product) =>
-      product.price < min.price ? product : min
-    )
-  }
+  Number(product.price) < Number(min.price)
+    ? product
+    : min
+)}
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -60,39 +61,53 @@ function App() {
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product, index) => (
             <div
-              key={index}
-              className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="h-48 w-full object-contain mb-4"
-              />
+  key={index}
+  className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition"
+>
 
-              <h3 className="text-lg font-semibold min-h-[60px]">{product.name}</h3>
+  {product.price == getCheapestProduct()?.price && (
+    <div className="bg-green-500 text-white px-2 py-1 rounded mb-2 inline-block">
+      🏆 Best Deal
+    </div>
+  )}
 
+  <img
+    src={product.image}
+    alt={product.name}
+    className="h-48 w-full object-contain mb-4"
+  />
+
+  <h3 className="text-xl font-semibold">
+    {product.name}
+  </h3>
               <p className="text-pink-500 font-bold mt-2">₹ {product.price}</p>
 
               <a
-                href={product.link}
-                target="_blank"
-                rel="noreferrer"
-                className="block mt-2 text-blue-500 underline"
-              >
-                View Product
-              </a>
+  href={product.link}
+  target="_blank"
+  rel="noreferrer"
+  className="text-blue-500 underline block mt-2"
+>
+  View Product
+</a>
 
-              <p className="text-gray-500 mt-2">
-                Platform: {product.platform}
-              </p>
+<p className="text-gray-500 mt-2">
+  Platform: {product.platform}
+</p>
 
               <div className="flex gap-3 mt-4">
                 <button
-                  onClick={() => setSelectedProduct(product)}
-                  className="bg-pink-500 text-white px-4 py-2 rounded-lg"
-                >
-                  Compare
-                </button>
+  onClick={() => {
+    setSelectedProduct(product)
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth"
+    })
+  }}
+  className="bg-pink-500 text-white px-4 py-2 rounded-lg"
+>
+  Compare
+</button>
 
                 <button
                   onClick={async () => {
@@ -116,38 +131,42 @@ function App() {
       </div>
 
       {selectedProduct && (
-        <div className="max-w-4xl mx-auto p-8">
-          <div className="bg-white p-6 rounded-2xl shadow-lg flex flex-col justify-between" >
-            <h2 className="text-3xl font-bold mb-4">Product Comparison</h2>
+  <div className="max-w-4xl mx-auto p-8">
+    <div className="bg-white p-6 rounded-2xl shadow-lg flex flex-col justify-between">
+      <h2 className="text-3xl font-bold mb-4">Product Comparison</h2>
 
-            <h3 className="text-2xl font-semibold">{selectedProduct.name}</h3>
+      <h3 className="text-2xl font-semibold">{selectedProduct.name}</h3>
 
-            <p className="text-pink-500 text-xl font-bold mt-3">
-              ₹ {selectedProduct.price}
-            </p>
-            <a
-  href={product.link}
-  target="_blank"
-  rel="noreferrer"
-  className="text-blue-500 underline block mt-2"
->
-  View Product
-</a>
+      <p className="text-pink-500 text-xl font-bold mt-3">
+        ₹ {selectedProduct.price}
+      </p>
 
-            <p className="text-gray-500 mt-2">
-              Platform: {product.platform}
-            </p>
+      <a
+        href={selectedProduct.link}
+        target="_blank"
+        rel="noreferrer"
+        className="text-blue-500 underline block mt-2"
+      >
+        View Product
+      </a>
+
+      <p className="text-gray-500 mt-2">
+        Platform: {selectedProduct.platform}
+      </p>
 
             <div className="mt-6 p-4 bg-green-100 rounded-xl">
-              <h4 className="font-bold text-green-700">Best Deal Found</h4>
+  <h4 className="font-bold text-green-700">
+    Best Deal Found
+  </h4>
 
-              <p>Cheapest Price: ₹ {getCheapestProduct()?.price}</p>
+  <p>
+    Cheapest Price: ₹ {getCheapestProduct()?.price}
+  </p>
 
-              <p>
-                Best Platform:{" "}
-                {getCheapestProduct()?.name.split(" ").slice(-1)}
-              </p>
-            </div>
+  <p>
+    Best Platform: {getCheapestProduct()?.platform}
+  </p>
+</div>
           </div>
         </div>
       )}

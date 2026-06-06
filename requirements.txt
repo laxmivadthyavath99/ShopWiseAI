@@ -14,3 +14,4 @@ playwright
 lxml
 selenium
 webdriver-manager
+python-dotenv 

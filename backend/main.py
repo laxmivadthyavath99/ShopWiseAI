@@ -1,6 +1,5 @@
 from scraper import search_flipkart
-
-
+from nykaa_scraper import scrape_nykaa
 
 
 
@@ -96,8 +95,12 @@ def status():
 @app.get("/search")
 def search(keyword: str):
 
-    products = search_flipkart(keyword)
+    flipkart_products = search_flipkart(keyword)
+
+    nykaa_products = scrape_nykaa(keyword)
 
     return {
-        "products": products
+        "products":
+            flipkart_products +
+            nykaa_products
     }
