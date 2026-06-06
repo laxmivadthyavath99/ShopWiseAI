@@ -18,3 +18,16 @@ def create_user(username, password):
     })
 
     return True
+
+def login_user(username, password):
+
+    hashed_password = hashlib.sha256(
+        password.encode()
+    ).hexdigest()
+
+    user = users.find_one({
+        "username": username,
+        "password": hashed_password
+    })
+
+    return user is not None

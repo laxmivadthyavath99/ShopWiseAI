@@ -6,3 +6,11 @@ Jinja2
 Werkzeug
 pymongo
 passlib[bcrypt]
+tailwindcss @tailwindcss/vite
+beautifulsoup4
+requests
+selenium
+playwright
+lxml
+selenium
+webdriver-manager
