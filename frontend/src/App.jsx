@@ -17,6 +17,15 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [showWishlist, setShowWishlist] = useState(false)
 
+  const [selectedPlatforms, setSelectedPlatforms] = useState([
+    "Amazon",
+    "Flipkart",
+    "Nykaa",
+    "Myntra"
+  ])
+
+  const [sortOrder, setSortOrder] = useState("default")
+
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user"))
     if (savedUser) {
@@ -35,10 +44,33 @@ function App() {
   const getCheapestProduct = () => {
     if (products.length === 0) return null
     return products.reduce((min, product) =>
-  Number(product.price) < Number(min.price)
-    ? product
-    : min
-)}
+      Number(product.price) < Number(min.price)
+        ? product
+        : min
+    )
+  }
+
+  const filteredProducts = products.filter(product =>
+    selectedPlatforms.includes(product.platform)
+  )
+
+  const sortedProducts = [...filteredProducts]
+
+  if (sortOrder === "low") {
+    sortedProducts.sort((a, b) => Number(a.price) - Number(b.price))
+  }
+
+  if (sortOrder === "high") {
+    sortedProducts.sort((a, b) => Number(b.price) - Number(a.price))
+  }
+
+  const prices = sortedProducts.map(product => Number(product.price))
+  const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0
+  const highestPrice = prices.length > 0 ? Math.max(...prices) : 0
+  const averagePrice =
+    prices.length > 0
+      ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
+      : 0
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -56,117 +88,133 @@ function App() {
       <TrendingProducts />
 
       <div className="max-w-6xl mx-auto p-8">
+        {/* Platform Filters */}
+        <div className="flex gap-4 mb-6 flex-wrap">
+          {["Amazon", "Flipkart", "Nykaa", "Myntra"].map((platform) => (
+            <label key={platform} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedPlatforms.includes(platform)}
+                onChange={() => {
+                  if (selectedPlatforms.includes(platform)) {
+                    setSelectedPlatforms(
+                      selectedPlatforms.filter(p => p !== platform)
+                    )
+                  } else {
+                    setSelectedPlatforms([...selectedPlatforms, platform])
+                  }
+                }}
+              />
+              {platform}
+            </label>
+          ))}
+        </div>
+
+        {/* Sorting Buttons */}
+        <div className="flex gap-3 mb-6">
+          <button
+            onClick={() => setSortOrder("default")}
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Default
+          </button>
+          <button
+            onClick={() => setSortOrder("low")}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Lowest Price
+          </button>
+          <button
+            onClick={() => setSortOrder("high")}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Highest Price
+          </button>
+        </div>
+
+        {/* Stats Bar */}
+        <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-xl shadow">
+            <h3 className="text-gray-500">Products Found</h3>
+            <p className="text-2xl font-bold">{sortedProducts.length}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow">
+            <h3 className="text-gray-500">Lowest Price</h3>
+            <p className="text-2xl font-bold text-green-600">₹ {lowestPrice}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow">
+            <h3 className="text-gray-500">Highest Price</h3>
+            <p className="text-2xl font-bold text-red-600">₹ {highestPrice}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow">
+            <h3 className="text-gray-500">Average Price</h3>
+            <p className="text-2xl font-bold text-blue-600">₹ {averagePrice}</p>
+          </div>
+        </div>
+
         <h2 className="text-3xl font-bold mb-6">Search Results</h2>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {products.map((product, index) => (
+          {sortedProducts.map((product, index) => (
             <div
-  key={index}
-  className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition"
->
+              key={index}
+              className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition"
+            >
+              {product.price == getCheapestProduct()?.price && (
+                <div className="bg-green-500 text-white px-2 py-1 rounded mb-2 inline-block">
+                  🏆 Best Deal
+                </div>
+              )}
 
-  {product.price == getCheapestProduct()?.price && (
-    <div className="bg-green-500 text-white px-2 py-1 rounded mb-2 inline-block">
-      🏆 Best Deal
-    </div>
-  )}
+              {/* ✅ Image Click opens Modal */}
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-48 w-full object-contain mb-4 cursor-pointer"
+                onClick={() => setSelectedProduct(product)}
+              />
 
-  <img
-    src={product.image}
-    alt={product.name}
-    className="h-48 w-full object-contain mb-4"
-  />
-
-  <h3 className="text-xl font-semibold">
-    {product.name}
-  </h3>
+              <h3 className="text-xl font-semibold">{product.name}</h3>
               <p className="text-pink-500 font-bold mt-2">₹ {product.price}</p>
-
-              <a
-  href={product.link}
-  target="_blank"
-  rel="noreferrer"
-  className="text-blue-500 underline block mt-2"
->
-  View Product
-</a>
-
-<p className="text-gray-500 mt-2">
-  Platform: {product.platform}
-</p>
-
-              <div className="flex gap-3 mt-4">
-                <button
-  onClick={() => {
-    setSelectedProduct(product)
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth"
-    })
-  }}
-  className="bg-pink-500 text-white px-4 py-2 rounded-lg"
->
-  Compare
-</button>
-
-                <button
-                  onClick={async () => {
-                    const response = await fetch(
-                      `http://127.0.0.1:8000/wishlist/add?username=${user?.username}&name=${product.name}&price=${product.price}`,
-                      {
-                        method: "POST",
-                      }
-                    )
-                    const data = await response.json()
-                    alert(data.message)
-                  }}
-                  className="border px-4 py-2 rounded-lg"
-                >
-                  ♡
-                </button>
-              </div>
+              <p className="text-gray-500 mt-2">Platform: {product.platform}</p>
             </div>
           ))}
         </div>
       </div>
 
+      {/* ✅ Product Details Modal */}
       {selectedProduct && (
-  <div className="max-w-4xl mx-auto p-8">
-    <div className="bg-white p-6 rounded-2xl shadow-lg flex flex-col justify-between">
-      <h2 className="text-3xl font-bold mb-4">Product Comparison</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-[500px] relative">
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-2 right-4 text-2xl"
+            >
+              ×
+            </button>
 
-      <h3 className="text-2xl font-semibold">{selectedProduct.name}</h3>
+            <img
+              src={selectedProduct.image}
+              alt={selectedProduct.name}
+              className="h-64 w-full object-contain"
+            />
 
-      <p className="text-pink-500 text-xl font-bold mt-3">
-        ₹ {selectedProduct.price}
-      </p>
+            <h2 className="text-2xl font-bold mt-4">{selectedProduct.name}</h2>
+            <p className="text-pink-500 text-xl font-bold mt-2">
+              ₹ {selectedProduct.price}
+            </p>
+            <p className="text-gray-500 mt-2">
+              Platform: {selectedProduct.platform}
+            </p>
 
-      <a
-        href={selectedProduct.link}
-        target="_blank"
-        rel="noreferrer"
-        className="text-blue-500 underline block mt-2"
-      >
-        View Product
-      </a>
-
-      <p className="text-gray-500 mt-2">
-        Platform: {selectedProduct.platform}
-      </p>
-
-            <div className="mt-6 p-4 bg-green-100 rounded-xl">
-  <h4 className="font-bold text-green-700">
-    Best Deal Found
-  </h4>
-
-  <p>
-    Cheapest Price: ₹ {getCheapestProduct()?.price}
-  </p>
-
-  <p>
-    Best Platform: {getCheapestProduct()?.platform}
-  </p>
-</div>
+            <a
+              href={selectedProduct.link}
+              target="_blank"
+              rel="noreferrer"
+              className="block mt-4 bg-blue-500 text-white px-4 py-2 rounded text-center"
+            >
+              View Product
+            </a>
           </div>
         </div>
       )}
@@ -186,7 +234,6 @@ function App() {
       {showWishlist && (
         <div className="max-w-6xl mx-auto p-8">
           <h2 className="text-3xl font-bold mb-6">Wishlist</h2>
-
           <div className="grid md:grid-cols-3 gap-6">
             {wishlist.map((item, index) => (
               <div
@@ -194,13 +241,11 @@ function App() {
                 className="bg-white p-6 rounded-xl shadow"
               >
                 <h3 className="text-xl font-semibold">{item.name}</h3>
-
                 <p className="text-pink-500 font-bold mt-2">₹ {item.price}</p>
-
                 <button
                   onClick={async () => {
                     const response = await fetch(
-                      `http://127.0.0.1:8000/wishlist/delete?username=${user?.username}&name=${item.name}`,
+                                        `http://127.0.0.1:8000/wishlist/delete?username=${user?.username}&name=${item.name}`,
                       {
                         method: "DELETE",
                       }
@@ -215,6 +260,43 @@ function App() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Product Details Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-[500px] relative">
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-2 right-4 text-2xl"
+            >
+              ×
+            </button>
+
+            <img
+              src={selectedProduct.image}
+              alt={selectedProduct.name}
+              className="h-64 w-full object-contain"
+            />
+
+            <h2 className="text-2xl font-bold mt-4">{selectedProduct.name}</h2>
+            <p className="text-pink-500 text-xl font-bold mt-2">
+              ₹ {selectedProduct.price}
+            </p>
+            <p className="text-gray-500 mt-2">
+              Platform: {selectedProduct.platform}
+            </p>
+
+            <a
+              href={selectedProduct.link}
+              target="_blank"
+              rel="noreferrer"
+              className="block mt-4 bg-blue-500 text-white px-4 py-2 rounded text-center"
+            >
+              View Product
+            </a>
           </div>
         </div>
       )}
