@@ -4,39 +4,56 @@ import { FaSearch } from "react-icons/fa"
 function SearchSection({ setProducts }) {
 
   const [keyword, setKeyword] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const searchProducts = async () => {
 
-  const response = await fetch(
-    `http://127.0.0.1:8000/search?keyword=${keyword}`
-  )
+    if (!keyword.trim()) return
 
-  const data = await response.json()
+    setLoading(true)
 
-  setProducts(data.products)
-}
+    try {
 
+      const response = await fetch(
+        `http://127.0.0.1:8000/search?keyword=${keyword}`
+      )
+
+      const data = await response.json()
+
+      setProducts(data.products)
+
+    } catch (error) {
+      console.log(error)
+    }
+
+    setLoading(false)
+  }
 
   return (
     <section className="py-16">
 
       <div className="max-w-4xl mx-auto">
 
-        <div className="bg-white rounded-2xl shadow-lg p-4 flex">
+        <div className="bg-white rounded-2xl shadow-xl p-4 flex border-2 border-transparent hover:border-pink-300 transition-all duration-300">
 
           <input
             type="text"
-            placeholder="Search products across Amazon, Flipkart, Myntra..."
-            className="flex-1 outline-none text-lg px-4"
+            placeholder="Search products across Amazon, Flipkart, Myntra, Nykaa..."
+            className="flex-1 outline-none text-lg px-4 cursor-text"
             value={keyword}
-            onChange={(e)=>setKeyword(e.target.value)}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                searchProducts()
+              }
+            }}
           />
 
           <button
             onClick={searchProducts}
-            className="bg-pink-500 text-white px-8 py-3 rounded-xl"
+            className="bg-pink-500 text-white px-8 py-3 rounded-xl cursor-pointer hover:bg-pink-600 transition"
           >
-            <FaSearch />
+            {loading ? "..." : <FaSearch />}
           </button>
 
         </div>

@@ -115,3 +115,31 @@ def search(keyword: str):
     return {
         "products": products
     }
+
+history = db["history"]
+
+@app.post("/history/add")
+def add_history(username: str, keyword: str):
+
+    history.insert_one({
+        "username": username,
+        "keyword": keyword
+    })
+
+    return {
+        "message": "History Saved"
+    }
+
+@app.get("/history")
+def get_history(username: str):
+
+    data = list(
+        history.find(
+            {"username": username},
+            {"_id": 0}
+        )
+    )
+
+    return {
+        "history": data[-10:]
+    }
