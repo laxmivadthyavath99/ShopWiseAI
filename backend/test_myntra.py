@@ -22,7 +22,12 @@ soup = BeautifulSoup(
 )
 
 products = soup.select("li.product-base")
+for product in products[:3]:
 
-print("Products:", len(products))
+    img = product.select_one("img")
+
+    if img:
+        print(img.get("src"))
+        print("----------------")
 
 driver.quit()

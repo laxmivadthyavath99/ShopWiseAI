@@ -1,6 +1,6 @@
 from scraper import search_flipkart
+from myntra_scraper import search_myntra
 from nykaa_scraper import scrape_nykaa
-
 
 
 from fastapi import FastAPI
@@ -95,12 +95,20 @@ def status():
 @app.get("/search")
 def search(keyword: str):
 
-    flipkart_products = search_flipkart(keyword)
+    products = []
 
-    nykaa_products = scrape_nykaa(keyword)
+    products.extend(
+        search_flipkart(keyword)
+    )
+
+    products.extend(
+    scrape_nykaa(keyword)
+)
+
+    products.extend(
+        search_myntra(keyword)
+    )
 
     return {
-        "products":
-            flipkart_products +
-            nykaa_products
+        "products": products
     }

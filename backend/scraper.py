@@ -25,14 +25,9 @@ def search_flipkart(keyword):
         try:
             text = card.text
             lines = text.split("\n")
+            name = lines[0].strip()
 
-            name = ""
-            for line in lines:
-                if "Apple iPhone" in line:
-                    name = line
-                    break
-
-            if not name:
+            if len(name) < 3:
                 continue
 
             price_match = re.search(r"₹[\d,]+", text)
@@ -51,7 +46,7 @@ def search_flipkart(keyword):
                     "price": price,
                     "platform": "Flipkart",
                     "link": link,
-                    "image":image
+                    "image": image
                 })
 
         except:
