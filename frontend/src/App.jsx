@@ -7,7 +7,7 @@ import Categories from "./components/Categories"
 import Platforms from "./components/Platforms"
 import TrendingProducts from "./components/TrendingProducts"
 import LoginModal from "./components/LoginModal"
-
+import PriceChart from "./components/PriceChart"
 function App() {
   const [showLogin, setShowLogin] = useState(false)
   const [showRegister, setShowRegister] = useState(false)
@@ -19,6 +19,10 @@ function App() {
   const [comparisonProducts, setComparisonProducts] = useState([])
   const [history, setHistory] = useState([])
   const [recentlyViewed, setRecentlyViewed] = useState([])
+  const [showCompareDashboard,
+setShowCompareDashboard]
+= useState(false)
+
   // ✅ Platform Filters
   const [selectedPlatforms, setSelectedPlatforms] = useState([
     "Amazon",
@@ -41,12 +45,30 @@ function App() {
   }
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user"))
-    if (savedUser) {
-      setUser(savedUser)
-      loadHistory()
-    }
-  }, [])
+
+  const savedUser =
+    JSON.parse(
+      localStorage.getItem("user")
+    )
+
+  if(savedUser){
+
+    setUser(savedUser)
+
+  }
+
+}, [])
+useEffect(() => {
+
+  if(user){
+
+    loadWishlist()
+
+    loadHistory()
+
+  }
+
+}, [user])
 
   const loadWishlist = async () => {
     const response = await fetch(
@@ -118,15 +140,17 @@ const compareProduct = (product) => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <Navbar
-        setShowLogin={setShowLogin}
-        setShowRegister={setShowRegister}
-        user={user}
-        setUser={setUser}
-        wishlist={wishlist}
-        showWishlist={showWishlist}
-        setShowWishlist={setShowWishlist}
-        loadWishlist={loadWishlist}
-      />
+  setShowLogin={setShowLogin}
+  setShowRegister={setShowRegister}
+  user={user}
+  setUser={setUser}
+  wishlist={wishlist}
+  showWishlist={showWishlist}
+  setShowWishlist={setShowWishlist}
+  showCompareDashboard={showCompareDashboard}
+  setShowCompareDashboard={setShowCompareDashboard}
+  
+/>
 
       <Hero />
       <SearchSection
@@ -136,7 +160,7 @@ const compareProduct = (product) => {
       />
       {history.length > 0 && (
 
-  <div className="max-w-6xl mx-auto px-8 mt-4 mb-6">
+  <div className="w-[95%] mx-auto">
 
     <div className="bg-white p-4 rounded-xl shadow">
 
@@ -180,7 +204,7 @@ const compareProduct = (product) => {
 )}
 {recentlyViewed.length > 0 && (
 
-<div className="max-w-6xl mx-auto px-8 mb-6">
+<div className="w-[95%] mx-auto">
 
   <div className="bg-white p-4 rounded-xl shadow">
 
@@ -228,9 +252,9 @@ const compareProduct = (product) => {
 )}
       {/* Wishlist Section */}
       {showWishlist && (
-        <div className="max-w-6xl mx-auto p-8">
+        <div className="w-[95%] mx-auto">
           <h2 className="text-3xl font-bold mb-6">Wishlist</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {wishlist.map((item, index) => (
               <div key={index} className="bg-white p-6 rounded-xl shadow">
                 <h3 className="text-xl font-semibold">{item.name}</h3>
@@ -256,7 +280,51 @@ const compareProduct = (product) => {
       )}
 
       {/* Search Results */}
-      <div className="max-w-6xl mx-auto p-8">
+      <div className="w-[95%] mx-auto">
+        {
+showCompareDashboard && (
+
+<div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow mb-6">
+
+  <h2 className="text-2xl font-bold mb-4">
+    Comparison Dashboard
+  </h2>
+
+  <div className="grid md:grid-cols-4 gap-4">
+
+    <div className="bg-green-100 p-4 rounded-lg">
+      Products: {products.length}
+    </div>
+
+    <div className="bg-blue-100 p-4 rounded-lg">
+      Lowest: ₹{
+        Math.min(
+          ...products.map(
+            p => Number(p.price)
+          )
+        )
+      }
+    </div>
+
+    <div className="bg-red-100 p-4 rounded-lg">
+      Highest: ₹{
+        Math.max(
+          ...products.map(
+            p => Number(p.price)
+          )
+        )
+      }
+    </div>
+
+    <div className="bg-purple-100 p-4 rounded-lg">
+      Platforms: 4
+    </div>
+
+  </div>
+
+</div>
+
+)}
         <h2 className="text-3xl font-bold mb-6">Search Results</h2>
 
         {/* Platform Filters */}
@@ -322,7 +390,7 @@ const compareProduct = (product) => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid md:grid-cols-3 gap-6">
+       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {sortedProducts.map((product, index) => (
             <div
               key={index}

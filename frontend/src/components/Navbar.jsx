@@ -2,8 +2,13 @@ function Navbar({
   setShowLogin,
   setShowRegister,
   user,
-  setUser
-}) {
+  setUser,
+  wishlist,
+  showWishlist,
+  setShowWishlist,
+  showCompareDashboard,
+  setShowCompareDashboard
+}){
 
   const logout = () => {
 
@@ -22,9 +27,37 @@ function Navbar({
       </h1>
 
       <div className="flex gap-8 font-medium">
-        <button>Home</button>
-        <button>Compare</button>
-        <button>Wishlist</button>
+        <button
+  onClick={() => {
+
+    setShowCompareDashboard(false)
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })
+
+  }}
+  className="cursor-pointer"
+>
+  Home
+</button>
+        <button
+  onClick={() =>
+    setShowCompareDashboard(
+      !showCompareDashboard
+    )
+  }
+  className="cursor-pointer"
+>
+  Compare
+</button>
+        <button
+  onClick={() => setShowWishlist(!showWishlist)}
+  className="cursor-pointer"
+>
+  Wishlist ({wishlist.length})
+</button>
       </div>
 
       {
