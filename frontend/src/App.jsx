@@ -8,6 +8,11 @@ import Platforms from "./components/Platforms"
 import TrendingProducts from "./components/TrendingProducts"
 import LoginModal from "./components/LoginModal"
 import PriceChart from "./components/PriceChart"
+import AIRecommendation from "./components/AIRecommendation"
+
+
+
+
 function App() {
   const [showLogin, setShowLogin] = useState(false)
   const [showRegister, setShowRegister] = useState(false)
@@ -278,6 +283,11 @@ const compareProduct = (product) => {
           </div>
         </div>
       )}
+      {/* <PriceChart products={products} /> */}
+
+<AIRecommendation
+  products={products}
+/>
 
       {/* Search Results */}
       <div className="w-[95%] mx-auto">
