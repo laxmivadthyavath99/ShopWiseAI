@@ -1,7 +1,12 @@
 import { useState } from "react"
 import { FaSearch } from "react-icons/fa"
 
-function SearchSection({ setProducts }) {
+function SearchSection({
+  setProducts,
+  user,
+  loadHistory
+}){
+  
 
   const [keyword, setKeyword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -21,6 +26,17 @@ function SearchSection({ setProducts }) {
       const data = await response.json()
 
       setProducts(data.products)
+      if(user){
+
+  await fetch(
+    `http://127.0.0.1:8000/history/add?username=${user.username}&keyword=${keyword}`,
+    {
+      method:"POST"
+    }
+  )
+
+  loadHistory()
+}
 
     } catch (error) {
       console.log(error)
