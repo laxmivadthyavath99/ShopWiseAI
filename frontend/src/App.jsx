@@ -84,13 +84,26 @@ function App() {
       ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
       : 0
 
-  const compareProduct = (product) => {
-    const firstWord = product.name.split(" ").slice(0, 2).join(" ").toLowerCase()
-    const matches = products.filter(p =>
-      p.name.toLowerCase().includes(firstWord)
+const compareProduct = (product) => {
+
+  const matches = products.filter(item => {
+
+    const words =
+      product.name
+        .toLowerCase()
+        .split(" ")
+
+    return words.some(word =>
+      item.name
+        .toLowerCase()
+        .includes(word)
     )
-    setComparisonProducts(matches)
-  }
+
+  })
+
+  setComparisonProducts(matches)
+
+}
   const addRecentlyViewed = (product) => {
 
   const filtered = recentlyViewed.filter(
@@ -165,7 +178,54 @@ function App() {
   </div>
 
 )}
+{recentlyViewed.length > 0 && (
 
+<div className="max-w-6xl mx-auto px-8 mb-6">
+
+  <div className="bg-white p-4 rounded-xl shadow">
+
+    <h2 className="text-lg font-bold mb-3">
+      Recently Viewed
+    </h2>
+
+    <div className="flex gap-4 overflow-x-auto">
+
+      {recentlyViewed.map((product,index)=>(
+
+      <div
+        key={index}
+        className="min-w-[220px] bg-gray-50 p-3 rounded-xl"
+      >
+
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-20 mx-auto object-contain"
+        />
+
+        <p className="font-semibold text-sm mt-2 line-clamp-2">
+          {product.name}
+        </p>
+
+        <p className="text-pink-500 font-bold">
+          ₹ {product.price}
+        </p>
+
+        <p className="text-gray-500 text-sm">
+          {product.platform}
+        </p>
+
+      </div>
+
+      ))}
+
+    </div>
+
+  </div>
+
+</div>
+
+)}
       {/* Wishlist Section */}
       {showWishlist && (
         <div className="max-w-6xl mx-auto p-8">
@@ -303,11 +363,17 @@ function App() {
               <div className="flex gap-3 mt-4">
                 {/* Details button */}
                 <button
-                  onClick={() => setSelectedProduct(product)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600"
-                >
-                  Details
-                </button>
+  onClick={() => {
+
+    setSelectedProduct(product)
+
+    addRecentlyViewed(product)
+
+  }}
+  className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600"
+>
+  Details
+</button>
 
                 {/* Compare button */}
                 <button
@@ -344,7 +410,7 @@ function App() {
 
       {/* Product Details Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-y-auto p-4">
           <div className="bg-white p-6 rounded-2xl w-[500px] relative">
             <button
               onClick={() => setSelectedProduct(null)}
@@ -381,16 +447,39 @@ function App() {
 
       {/* Comparison Modal */}
       {comparisonProducts.length > 0 && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-2xl w-[700px]">
-            <button
-              onClick={() => setComparisonProducts([])}
-              className="float-right text-xl"
-            >
-              ✖
-            </button>
 
-            <h2 className="text-2xl font-bold mb-4">Product Comparison</h2>
+<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-y-auto p-4">
+
+  <div className="bg-white p-6 rounded-2xl w-[700px] max-h-[90vh] overflow-y-auto">
+
+    <button
+      onClick={() => setComparisonProducts([])}
+      className="sticky top-0 float-right text-xl bg-white px-2 rounded cursor-pointer"
+    >
+      ✖
+    </button>
+
+    <h2 className="text-2xl font-bold mb-4">
+      Product Comparison
+    </h2>
+            {comparisonProducts.length > 0 && (
+
+<p className="mb-4 text-green-600 font-bold">
+
+🏆 Best Deal:
+
+{
+  comparisonProducts
+    .sort(
+      (a,b)=>
+      Number(a.price)-Number(b.price)
+    )[0]
+    .platform
+}
+
+</p>
+
+)}
 
             {comparisonProducts
               .sort((a, b) => Number(a.price) - Number(b.price))
@@ -407,6 +496,33 @@ function App() {
                   <p>{item.name}</p>
                   <p className="text-pink-500 font-bold">₹ {item.price}</p>
                   {index === 0 && <span>🏆 Best Deal</span>}
+                  <p className="mb-4">
+
+You Save ₹ {
+
+  Number(
+    comparisonProducts
+      .sort(
+        (a,b)=>
+        Number(b.price)-Number(a.price)
+      )[0]
+      ?.price || 0
+  )
+
+  -
+
+  Number(
+    comparisonProducts
+      .sort(
+        (a,b)=>
+        Number(a.price)-Number(b.price)
+      )[0]
+      ?.price || 0
+  )
+
+}
+
+</p>
                 </div>
               ))}
           </div>
