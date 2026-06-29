@@ -9,7 +9,7 @@ import TrendingProducts from "./components/TrendingProducts"
 import LoginModal from "./components/LoginModal"
 import PriceChart from "./components/PriceChart"
 import AIRecommendation from "./components/AIRecommendation"
-
+import API from "./api"
 
 
 
@@ -43,7 +43,7 @@ setShowCompareDashboard]
   const loadHistory = async () => {
     if (!user) return
     const response = await fetch(
-      `http://127.0.0.1:8000/history?username=${user.username}`
+      `${API}/history?username=${user.username}`
     )
     const data = await response.json()
     setHistory(data.history || [])
@@ -77,7 +77,7 @@ useEffect(() => {
 
   const loadWishlist = async () => {
     const response = await fetch(
-      `http://127.0.0.1:8000/wishlist?username=${user?.username}`
+      `${API}/wishlist?username=${user?.username}`
     )
     const data = await response.json()
     setWishlist(data.wishlist || [])
@@ -185,7 +185,7 @@ const compareProduct = (product) => {
   onClick={async () => {
 
     const response = await fetch(
-      `http://127.0.0.1:8000/search?keyword=${item.keyword}`
+      `${API}/search?keyword=${item.keyword}`
     )
 
     const data = await response.json()
@@ -267,7 +267,7 @@ const compareProduct = (product) => {
                 <button
                   onClick={async () => {
                     const response = await fetch(
-                      `http://127.0.0.1:8000/wishlist/delete?username=${user?.username}&name=${item.name}`,
+                      `${API}/wishlist/delete?username=${user?.username}&name=${item.name}`,
                       { method: "DELETE" }
                     )
                     const data = await response.json()
@@ -469,7 +469,7 @@ showCompareDashboard && (
                       return
                     }
                     const response = await fetch(
-                      `http://127.0.0.1:8000/wishlist/add?username=${user.username}&name=${product.name}&price=${product.price}`,
+                      `${API}/wishlist/add?username=${user.username}&name=${product.name}&price=${product.price}`,
                       { method: "POST" }
                     )
                     const data = await response.json()

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { FaSearch } from "react-icons/fa"
-
+import API from "../api"
 function SearchSection({
   setProducts,
   user,
@@ -20,7 +20,7 @@ function SearchSection({
     try {
 
       const response = await fetch(
-        `http://127.0.0.1:8000/search?keyword=${keyword}`
+        `${API}/search?keyword=${keyword}`
       )
 
       const data = await response.json()

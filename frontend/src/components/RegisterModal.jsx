@@ -1,5 +1,5 @@
 import { useState } from "react"
-
+import API from "../api"
 function RegisterModal({ open, onClose }) {
 
   const [username, setUsername] = useState("")
@@ -8,7 +8,7 @@ function RegisterModal({ open, onClose }) {
   const register = async () => {
 
     const response = await fetch(
-      `http://127.0.0.1:8000/register?username=${username}&password=${password}`,
+      `${API}/register?username=${username}&password=${password}`,
       {
         method: "POST"
       }

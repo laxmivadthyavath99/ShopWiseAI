@@ -1,5 +1,5 @@
 import { useState } from "react"
-
+import API from "../api"
 function LoginModal({ open, onClose }) {
 
   const [username, setUsername] = useState("")
@@ -8,7 +8,7 @@ function LoginModal({ open, onClose }) {
   const login = async () => {
 
   const response = await fetch(
-    `http://127.0.0.1:8000/login?username=${username}&password=${password}`,
+    `${API}/login?username=${username}&password=${password}`,
     {
       method: "POST"
     }
