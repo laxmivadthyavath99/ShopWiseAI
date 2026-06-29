@@ -6,7 +6,6 @@ Jinja2
 Werkzeug
 pymongo
 passlib[bcrypt]
-tailwindcss @tailwindcss/vite
 beautifulsoup4
 requests
 selenium
@@ -16,5 +15,3 @@ selenium
 webdriver-manager
 python-dotenv 
 rapidfuzz
-chart.js 
-react-chartjs-2
